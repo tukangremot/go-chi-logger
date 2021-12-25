@@ -14,11 +14,12 @@ func Logger(category string, logger logrus.FieldLogger) func(h http.Handler) htt
 	return func(h http.Handler) http.Handler {
 		fn := func(w http.ResponseWriter, r *http.Request) {
 			var (
-				reqID = middleware.GetReqID(r.Context())
-				ww    = middleware.NewWrapResponseWriter(w, r.ProtoMajor)
-				ts    = time.Now().UTC()
-				host  = r.Host
-				uri   = r.RequestURI
+				reqID 	  = middleware.GetReqID(r.Context())
+				ww    	  = middleware.NewWrapResponseWriter(w, r.ProtoMajor)
+				ts    	  = time.Now().UTC()
+				host  	  = r.Host
+				uri    	  = r.RequestURI
+				userAgent = r.UserAgent()
 			)
 
 			defer func() {
@@ -44,6 +45,7 @@ func Logger(category string, logger logrus.FieldLogger) func(h http.Handler) htt
 					"http_scheme":       scheme,
 					"http_addr":         addr,
 					"remote_addr":       remoteIP,
+					"user_agent":	     userAgent,
 					"resp_status":       ww.Status(),
 					"resp_elapsed":      int64(duration),
 					"resp_elapsed_ms":   time.Since(ts).String(),
