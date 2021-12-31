@@ -10,7 +10,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func Logger(category string, logger logrus.FieldLogger) func(h http.Handler) http.Handler {
+func Logger(category string, logger logrus.FieldLogger, meta interface{}) func(h http.Handler) http.Handler {
 	return func(h http.Handler) http.Handler {
 		fn := func(w http.ResponseWriter, r *http.Request) {
 			var (
@@ -52,6 +52,7 @@ func Logger(category string, logger logrus.FieldLogger) func(h http.Handler) htt
 					"resp_bytes_length": ww.BytesWritten(),
 					"ts":                ts.Format(time.RFC1123),
 					"category":          category,
+					"meta":              meta,
 				}
 				if len(reqID) > 0 {
 					fields["request_id"] = reqID
